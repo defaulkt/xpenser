@@ -2,41 +2,56 @@
 
 
 
-class Xloader:
-    '''Master class for load transactional data'''
-    def __init__(self):
-        '''Init function'''
-        self.transactions = {}
+
+class Fileloader():
+    '''Class for load from files'''
+    def __init__(self, Filepath, Fields, Header = True, Filetype = "cvs", Encoding = "utf8"):
+        self.transactions = []
+        self.file_path = Filepath
+        if not isinstance(Fields, dict):
+            print("Fields must be a dictinary: {'field_name': field_number} ")
+            self.fields = {}
+        elif min(Fields.values()) < 1:
+            print("Fields positions cannot be < 1")
+            self.fields = {}
+        else:
+            self.fields = Fields
+        if Filetype == "csv":
+            self.divder = ","
+        elif Filetype == "tsv":
+            self.divder = "\t"
+        else:
+            self.divder = ","
+         
+        self.encoding = Encoding
+
 
     def load(self):
-        '''Load data from media'''
-
-        
-
-class Fileloader(Xloader):
-    '''Class for load from files'''
-    def __init__(self, Filepath, Fields, Readall = True, Readchunk = 100, Filetype = "cvs"):
-        Xloader.__init__(Xloader)
-        self.file_path = Filepath
-        self.file_type = Filetype
-        self.fields = Fields
-        self.chunk = Readchunk
-        self.current_line = 0
-        self.read_all = Readall
-
-    def readfile(self):
         '''Read file function'''
+        
         try:
-            with open(self.file_path, 'r') as f:
+            with open(self.file_path, "r", encoding=self.encoding) as file_descriptor:
+                for line in file_descriptor:
+                    transaction = {}
+                    parsed_line = line.strip().split(self.divder)
+                    if len(parsed_line) < max(self.fields.values()):
+                        pass
+                    for field_name, field_position in self.fields.items():
+                        transaction[field_name] = parsed_line[field_position-1]
+                    self.transactions.append(transaction)
+        except IOError as io_exception:
+            print('Operation failed: %s' , str(io_exception.strerror))
+        file_descriptor.close()
 
-        except IOError as e:
-            print 'Operation failed: %s' % e.strerror
-
+    
 
     
 
 
 if __name__ == "__main__":
-    Loader = Xloader()
-    print(Loader.transactions)
+    Loader = Fileloader("/Users/vakimov/Desktop/currentTransaction_5953.csv", {"Date": 1, "Payee": 3, "Amount": 5})
+    Loader.load()
+    for item in Loader.transactions:
+        print(item)
+ 
   
