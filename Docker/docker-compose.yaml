@@ -9,6 +9,6 @@ services:
       - "54320:5432"
     volumes:
       - my_dbdata:/var/lib/postgresql/data
-      - "/Users/vakimov/Documents/postgre/Expenser.sql:/root/Expenser.sql"
+      - ./Expenser.sql:/root/Expenser.sql
 volumes:
   my_dbdata:
