@@ -1,6 +1,6 @@
 '''Load modules for getting data from different media'''
 
-
+import logging
 
 
 class Fileloader():
@@ -24,6 +24,7 @@ class Fileloader():
             self.divder = ","
          
         self.encoding = Encoding
+        self.logger = logging.getLogger(__name__)
 
 
     def load(self):
@@ -34,13 +35,14 @@ class Fileloader():
                 for line in file_descriptor:
                     transaction = {}
                     parsed_line = line.strip().split(self.divder)
+                    self.logger.debug("Reading a line from the file: %s", parsed_line)
                     if len(parsed_line) < max(self.fields.values()):
                         pass
                     for field_name, field_position in self.fields.items():
                         transaction[field_name] = parsed_line[field_position-1]
                     self.transactions.append(transaction)
         except IOError as io_exception:
-            print('Operation failed: %s' , str(io_exception.strerror))
+            self.logger.critical('Operation failed: %s' , str(io_exception.strerror))
         file_descriptor.close()
 
     
