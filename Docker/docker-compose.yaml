@@ -1,0 +1,14 @@
+version: "3"
+services:
+  db:
+    image: "postgres:14"
+    container_name: "my_postgres"
+    environment:
+      POSTGRES_PASSWORD: "my_password"
+    ports:
+      - "54320:5432"
+    volumes:
+      - my_dbdata:/var/lib/postgresql/data
+      - ./Expenser.sql:/root/Expenser.sql
+volumes:
+  my_dbdata:
